@@ -2,7 +2,6 @@ section .data
     ; Define variables
     num1 dq 10          ; First number (64-bit)
     num2 dq 20          ; Second number (64-bit)
-    result_format db "Result: %d", 10, 0  ; Format string for printing result
 
 section .text
     global _start
@@ -16,38 +15,11 @@ _start:
     add rax, rbx        ; Add num1 and num2, result in rax
 
     ; Print result
-    mov rdi, result_format  ; Load format string address
-    mov rsi, rax            ; Load result value
-    xor rax, rax            ; Clear rax for syscall
-    call printf             ; Call printf to print result
-
-    ; Exit program
-    mov rax, 60         ; syscall for exit
-    xor rdi, rdi        ; exit status 0
+    mov rdi, 1          ; File descriptor for STDOUT
+    mov rsi, rax        ; Result value to print
+    mov rdx, 8          ; Length of the number in bytes (64-bit)
+    mov rax, 1          ; syscall number for write
     syscall             ; Invoke syscall
-
-section .data
-    ; Define variables
-    num1 dq 10          ; First number (64-bit)
-    num2 dq 20          ; Second number (64-bit)
-    result_format db "Result: %d", 10, 0  ; Format string for printing result
-
-section .text
-    global _start
-
-_start:
-    ; Load values into registers
-    mov rax, [num1]     ; Load num1 into rax
-    mov rbx, [num2]     ; Load num2 into rbx
-
-    ; Perform addition
-    add rax, rbx        ; Add num1 and num2, result in rax
-
-    ; Print result
-    mov rdi, result_format  ; Load format string address
-    mov rsi, rax            ; Load result value
-    xor rax, rax            ; Clear rax for syscall
-    call printf             ; Call printf to print result
 
     ; Exit program
     mov rax, 60         ; syscall for exit
