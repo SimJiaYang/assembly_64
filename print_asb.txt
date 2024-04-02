@@ -1,7 +1,6 @@
 section .data
     num1 dw 10       ; Define a word (16-bit) variable and initialize it with value 10
     num2 dw 20       ; Define another word variable and initialize it with value 20
-    newline db 10    ; Newline character for printing
 
 section .text
     global _start      ; Entry point for the program
@@ -62,4 +61,12 @@ print_result:
     add cx, '0'       ; Convert result to ASCII character
     mov dl, cl        ; Move ASCII character to DL register
     int 0x80          ; Perform syscall
+    mov eax, 4        ; Syscall number for sys_write
+    mov ebx, 1        ; File descriptor 1 (stdout)
+    mov ecx, newline  ; Load newline character into ECX
+    mov edx, 1        ; Number of bytes to write (newline)
+    int 0x80          ; Perform syscall
     ret
+
+section .data
+    newline db 10    ; Newline character for printing
