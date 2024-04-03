@@ -1,6 +1,8 @@
 section .data
     num1 dw 10       ; Define a word (16-bit) variable and initialize it with value 10
     num2 dw 20       ; Define another word variable and initialize it with value 20
+    res dw 0
+    result db "Result: ", 0   ; Define a string to print the result
 
 section .text
     global _start      ; Entry point for the program
@@ -9,64 +11,26 @@ _start:
     ; Addition
     mov ax, [num1]    ; Move the value of num1 into register AX
     add ax, [num2]    ; Add the value of num2 to register AX
-    ; AX now contains the sum of num1 and num2
+    ; At this point, AX contains the sum of num1 and num2
     
-    ; Print result of addition
-    mov cx, ax        ; Move result into CX for printing
-    call print_result ; Call subroutine to print result
+    ; Move ax to res
+    mov [res], ax
     
-    ; Subtraction
-    mov bx, [num1]    ; Move the value of num1 into register BX
-    sub bx, [num2]    ; Subtract the value of num2 from register BX
-    ; BX now contains the result of num1 - num2
+    ; Print the result
+    mov eax, 4        ; Syscall number for write
+    mov ebx, 1        ; File descriptor for stdout
+    mov ecx, result   ; Address of the string to print
+    mov edx, 8        ; Length of the string
+    int 0x80          ; Perform syscall to print the string
     
-    ; Print result of subtraction
-    mov cx, bx        ; Move result into CX for printing
-    call print_result ; Call subroutine to print result
-    
-    ; Multiplication
-    mov ax, [num1]    ; Move the value of num1 into register AX
-    imul ax, [num2]   ; Multiply the value of AX by the value of num2
-    ; AX now contains the result of num1 * num2
-    
-    ; Print result of multiplication
-    mov cx, ax        ; Move result into CX for printing
-    call print_result ; Call subroutine to print result
-    
-    ; Division
-    mov dx, 0         ; Clear DX register (used for high word of dividend in 32-bit division)
-    mov ax, [num1]    ; Move the value of num1 into register AX
-    cwd               ; Sign extend AX into DX:AX (prepare for division)
-    idiv word [num2]  ; Divide DX:AX by the value of num2 (16-bit division)
-    ; Quotient is stored in AX, remainder in DX
-    
-    ; Print quotient of division
-    mov cx, ax        ; Move quotient into CX for printing
-    call print_result ; Call subroutine to print result
-    
-    ; Print remainder of division
-    mov cx, dx        ; Move remainder into CX for printing
-    call print_result ; Call subroutine to print result
+    ; Print the value of the result
+    mov eax, 4        ; Syscall number for write
+    mov ebx, 1        ; File descriptor for stdout
+    mov ecx, num2   ; Value of AX register (result of addition)
+    mov edx, 2        ; Length of the value (since AX is 16-bit, 2 bytes)
+    int 0x80          ; Perform syscall to print the value
     
     ; Exit the program
     mov eax, 1        ; Syscall number for exit
     xor ebx, ebx      ; Return 0 status
     int 0x80          ; Perform syscall
-
-print_result:
-    ; Function to print the result stored in CX register
-    mov eax, 4        ; Syscall number for sys_write
-    mov ebx, 1        ; File descriptor 1 (stdout)
-    mov edx, 1        ; Number of bytes to write (assuming result is a single digit)
-    add cx, '0'       ; Convert result to ASCII character
-    mov dl, cl        ; Move ASCII character to DL register
-    int 0x80          ; Perform syscall
-    mov eax, 4        ; Syscall number for sys_write
-    mov ebx, 1        ; File descriptor 1 (stdout)
-    mov ecx, newline  ; Load newline character into ECX
-    mov edx, 1        ; Number of bytes to write (newline)
-    int 0x80          ; Perform syscall
-    ret
-
-section .data
-    newline db 10    ; Newline character for printing
