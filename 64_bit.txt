@@ -1,9 +1,8 @@
 section .data
     num1 dd 20       ; Define a double word (32-bit) variable and initialize it with value 10
     num2 dd 20       ; Define another double word variable and initialize it with value 20
-    result_text db 'Result :  ',0xA; Define a null-terminated string to print before the result
+    result_text dw 'Result : ',0xA; Define a null-terminated string to print before the result
     result_text_len equ $ - result_text    ; Calculate the length of the string
-    newline db 0xA    ; Define a newline character
 
 section .bss
     ascii_buff resb 10       ; Reserve space for ASCII representation (up to 10 characters)
@@ -44,13 +43,6 @@ convert_loop:
     mov edx, ascii_len         ; Length of the ASCII representation
     mov ecx, ascii_buff        ; Address of ASCII representation
     syscall                    ; Call kernel
-    
-    ; Print the new line
-    mov rax, 1         ; Syscall number for write
-    mov rdi, 1         ; File descriptor (1 for stdout)
-    mov rsi, newline   ; Pointer to the newline character
-    mov rdx, 1         ; Length of the newline character (1 byte)
-    syscall            ; Perform syscall to print newline
 
     ; Exit the program
     mov eax, 60        ; Syscall number for exit

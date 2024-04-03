@@ -1,8 +1,8 @@
 section .data
-    num1 dd 20       ; Define a double word (32-bit) variable and initialize it with value 20
-    num2 dd 20       ; Define another double word variable and initialize it with value 15
-    msg dd 'Result = ' 
-    msg_len equ $ - msg    ; Calculate the length of the string
+    num1 dd 20             ; Define a double word (32-bit) variable and initialize it with value 20
+    num2 dd 15               ; Define another double word variable and initialize it with value 15
+    msg dd 'Result : ',   ; Define a message to print before the result, including newline
+    msg_len equ $ - msg      ; Calculate the length of the string
 
 section .bss
     ascii_buff resb 10       ; Reserve space for ASCII representation (up to 10 characters)
@@ -14,7 +14,6 @@ _start:
     ; Addition
     mov eax, [num1]    ; Move the value of num1 into register EAX
     add eax, [num2]    ; Add the value of num2 to register EAX
-    ; At this point, EAX contains the sum of num1 and num2
     
     ; Convert the number to ASCII
     mov esi, ascii_buff        ; Point ESI to the buffer for ASCII representation
@@ -34,11 +33,8 @@ convert_loop:
     mov eax, 4                 ; Syscall number for sys_write
     mov ebx, 1                 ; File descriptor (stdout)
     mov ecx, msg               ; Message to print
-    mov edx, msg_len          ; Message length
+    mov edx, msg_len           ; Message length
     int 0x80                   ; Call kernel
-    
-    ; Calculate the length of the ASCII representation
-    mov edx, 10                ; Length of the ASCII representation
     
     ; Print the ASCII representation
     mov eax, 4                 ; Syscall number for sys_write
