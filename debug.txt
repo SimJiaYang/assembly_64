@@ -1,0 +1,36 @@
+section .data
+    num1 dd 10       ; Define a double word (32-bit) variable and initialize it with value 10
+    num2 dd 20       ; Define another double word variable and initialize it with value 20
+    result_text db 'The result is:', 0   ; Define a null-terminated string to print before the result
+    result_text_len equ $ - result_text    ; Calculate the length of the string
+    ans db 0
+    ans_len equ $ - ans
+
+section .text
+    global _start      ; Entry point for the program
+
+_start:
+    ; Addition
+    mov rax, [num1]    ; Move the value of num1 into register RAX
+    add rax, [num2]    ; Add the value of num2 to register RAX
+    
+    ; Store data in res
+    mov [ans], rax
+    
+    ; Print the text "The result is: "
+    mov rax, 1         ; Syscall number for write
+    mov rdi, 1         ; File descriptor (1 for stdout)
+    mov rsi, result_text ; Pointer to the result_text buffer
+    mov rdx, result_text_len ; Length of the string
+    syscall            ; Perform syscall to print
+
+    ; Print the result
+    mov rax, 1         ; Syscall number for write
+    mov rsi, ans   ; Address of the result to print
+    mov rdx, ans_len         ; Number of bytes to write (32-bit integer = 4 bytes)
+    syscall            ; Perform syscall to print
+
+    ; Exit the program
+    mov rax, 60        ; Syscall number for exit
+    xor edi, edi       ; Return 0 status
+    syscall            ; Perform syscall to exit
