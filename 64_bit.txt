@@ -1,7 +1,7 @@
 section .data
     num1 dd 20       ; Define a double word (32-bit) variable and initialize it with value 10
     num2 dd 20       ; Define another double word variable and initialize it with value 20
-    result_text db 'Result:', 0xA ; Define a null-terminated string to print before the result
+    result_text dw 'Result : ',0xA; Define a null-terminated string to print before the result
     result_text_len equ $ - result_text    ; Calculate the length of the string
 
 section .bss
