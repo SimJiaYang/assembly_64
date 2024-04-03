@@ -1,6 +1,6 @@
 // 64 Bit
 nasm -f elf64 op.asm -o add.o
-gcc -o add add.o
+ld -o add add.o
 ./add
 
 // 32Bit
