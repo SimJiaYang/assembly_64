@@ -1,4 +1,4 @@
-ection .data
+section .data
     num1 dd 20       ; Define a word (16-bit) variable and initialize it with value 10
     num2 dd 15       ; Define another word variable and initialize it with value 20
     result      dd  0  ; Predefined number to convert
