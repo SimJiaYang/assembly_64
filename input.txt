@@ -50,9 +50,9 @@ _start:
     int 0x80
 
     ; Convert the numbers to integers
-    mov eax, [num1]
+    mov eax, dword [num1]  ; Use dword to load 4 bytes
     sub eax, '0'
-    mov ebx, [num2]
+    mov ebx, dword [num2]  ; Use dword to load 4 bytes
     sub ebx, '0'
 
     ; Addition
@@ -63,7 +63,7 @@ _start:
     mov ecx, 10
 
 convert_loop:
-    mov edx, 0
+    xor edx, edx   ; Clear edx before the division
     mov ebx, 10
     div ebx
     add dl, '0'
@@ -82,7 +82,7 @@ convert_loop:
     ; Print the ASCII representation
     mov eax, 4
     mov ebx, 1
-    mov ecx, esi
+    lea ecx, [esi]   ; Load the address of the ASCII buffer
     mov edx, 10
     int 0x80
 
