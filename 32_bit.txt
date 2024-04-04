@@ -3,6 +3,7 @@ section .data
     num2 dd 5                     ; Define another double word variable and initialize it with value 5
     msg db 'Result', 10, 0     ; Define a message to print before the result, including newline (10 is ASCII code for newline)
     msg_len equ $-msg-1           ; Calculate the length of the message string
+    newline db 10, 0           ; Define newline character (10 is ASCII code for newline)
 
 section .bss
     ascii_buff resb 10            ; Reserve space for ASCII representation (up to 10 characters)
@@ -54,6 +55,3 @@ convert_loop:
     mov eax, 1                 ; Syscall number for sys_exit
     xor ebx, ebx               ; Return 0 status
     int 0x80                   ; Call kernel
-
-section .data
-    newline db 10, 0           ; Define newline character (10 is ASCII code for newline)
