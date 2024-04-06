@@ -1,6 +1,6 @@
 section .data
     num1 dd 8                     ; Define a double word (32-bit) variable and initialize it with value 8
-    num2 dd 5                     ; Define another double word variable and initialize it with value 5
+    num2 dd 1                     ; Define another double word variable and initialize it with value 5
     msg db 'Result', 10, 0     ; Define a message to print before the result, including newline (10 is ASCII code for newline)
     msg_len equ $-msg-1           ; Calculate the length of the message string
     newline db 10, 0           ; Define newline character (10 is ASCII code for newline)
