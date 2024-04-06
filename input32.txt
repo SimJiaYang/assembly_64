@@ -3,8 +3,10 @@ section .data
     ;num2 dd 7                     ; Define another double word variable and initialize it with value 5
     msg db 'Result', 10, 0     ; Define a message to print before the result, including newline (10 is ASCII code for newline)
     msg_len equ $-msg-1           ; Calculate the length of the message string
-    inMsg db "Input number: ", 10, 0
-    inLen equ $-inMsg-1
+    inMsg_1 db "Please input first number: ", 10, 0
+    inLen_1 equ $-inMsg_1-1
+    inMsg_2 db "Please input second number: ", 10, 0
+    inLen_2 equ $-inMsg_2-1
     newline db 10, 0           ; Define newline character (10 is ASCII code for newline)
 
 section .bss
@@ -18,8 +20,8 @@ section .text
 _start:
     ; Input variables
     mov eax, 4
-    mov edx, inLen
-    mov ecx, inMsg
+    mov edx, inLen_1
+    mov ecx, inMsg_1
     mov ebx, 1
     int 0x80
     
@@ -32,8 +34,8 @@ _start:
     
     ; Input variables
     mov eax, 4
-    mov edx, inLen
-    mov ecx, inMsg
+    mov edx, inLen_2
+    mov ecx, inMsg_2
     mov ebx, 1
     int 0x80
     
