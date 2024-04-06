@@ -1,64 +1,71 @@
 section .data
-    ;num1 dd 8                     ; Define a double word (32-bit) variable and initialize it with value 8
-    ;num2 dd 7                     ; Define another double word variable and initialize it with value 5
-    msg db 'Result', 10, 0     ; Define a message to print before the result, including newline (10 is ASCII code for newline)
-    msg_len equ $-msg-1           ; Calculate the length of the message string
-    inMsg_1 db "Please input first number: ", 10, 0
-    inLen_1 equ $-inMsg_1-1
-    inMsg_2 db "Please input second number: ", 10, 0
-    inLen_2 equ $-inMsg_2-1
+    ; Input and Result Message
+    inMsg_1 db "Please input first number: ", 10, 0    ; Message prompting for the first number
+    inLen_1 equ $-inMsg_1-1    ; Length of the first input message
+    inMsg_2 db "Please input second number: ", 10, 0   ; Message prompting for the second number
+    inLen_2 equ $-inMsg_2-1    ; Length of the second input message
+    msg db 'Result', 10, 0     ; Message indicating the start of the result, with newline character
+    msg_len equ $-msg-1        ; Length of the result message
+
+    ; New Line
     newline db 10, 0           ; Define newline character (10 is ASCII code for newline)
 
+    ; Define mnemonic aliases for system operations
+    SYS_OUTPUT equ 1           ; Alias for system output operation
+    SYS_INPUT equ 2            ; Alias for system input operation
+    SYS_WRITE equ 4            ; System call for writing
+    SYS_READ equ 3             ; System call for reading
+
 section .bss
-    num1    resb 4
-    num2    resb 4
-    ascii_buff resb 4            ; Reserve space for ASCII representation (up to 10 characters)
+    num1    resb 4             ; Reserve space for the first number
+    num2    resb 4             ; Reserve space for the second number
+    ascii_buff resb 4          ; Reserve space for ASCII representation (up to 10 characters)
 
 section .text
     global _start
 
 _start:
-    ; Input variables
-    mov eax, 4
-    mov edx, inLen_1
-    mov ecx, inMsg_1
-    mov ebx, 1
-    int 0x80
-    
-    ; Read variables
-    mov eax, 3
-    mov edx, 2
-    mov ecx, num1
-    mov ebx, 0
-    int 0x80
-    
-    ; Input variables
-    mov eax, 4
-    mov edx, inLen_2
-    mov ecx, inMsg_2
-    mov ebx, 1
-    int 0x80
-    
-    ; Read variables
-    mov eax, 3
-    mov edx, 2
-    mov ecx, num2
-    mov ebx, 0
-    int 0x80
-    
-    ; It only allow enter single Number, transfer to num first
-    movzx eax, byte [num1]    ; Move the value of num1 into register EAX, zero-extend to dword
-    sub eax, '0'              ; convert char to num
-    movzx ebx, byte [num2]    ; Move the value of num1 into register EAX, zero-extend to dword
-    sub ebx, '0'              ; convert char to num
+    ; Input the first number
+    mov eax, SYS_WRITE         ; System call for writing
+    mov edx, inLen_1           ; Length of the first input message
+    mov ecx, inMsg_1           ; Address of the first input message
+    mov ebx, SYS_OUTPUT        ; File descriptor (stdout)
+    int 0x80                   ; Call kernel
+
+    ; Read the first number
+    mov eax, SYS_READ          ; System call for reading
+    mov edx, 2                 ; Number of bytes to read
+    mov ecx, num1              ; Address to store the first number
+    mov ebx, SYS_INPUT         ; File descriptor (stdin)
+    int 0x80                   ; Call kernel
+
+    ; Input the second number
+    mov eax, SYS_WRITE         ; System call for writing
+    mov edx, inLen_2           ; Length of the second input message
+    mov ecx, inMsg_2           ; Address of the second input message
+    mov ebx, SYS_OUTPUT        ; File descriptor (stdout)
+    int 0x80                   ; Call kernel
+
+    ; Read the second number
+    mov eax, SYS_READ          ; System call for reading
+    mov edx, 2                 ; Number of bytes to read
+    mov ecx, num2              ; Address to store the second number
+    mov ebx, SYS_INPUT         ; File descriptor (stdin)
+    int 0x80                   ; Call kernel
+
+    ; Convert ASCII characters to numbers
+    movzx eax, byte [num1]     ; Move the value of num1 into register EAX, zero-extend to dword
+    sub eax, '0'               ; Convert ASCII character to number
+    movzx ebx, byte [num2]     ; Move the value of num2 into register EBX, zero-extend to dword
+    sub ebx, '0'               ; Convert ASCII character to number
 
     ; Addition
-    add eax, ebx    ; Add the value of num2 to register EAX
+    add eax, ebx               ; Add the second number to the first number
     
-    ; Convert the number to ASCII
+    ; Convert the result to ASCII
     mov esi, ascii_buff        ; Point ESI to the buffer for ASCII representation
-    mov ecx, 4               ; Set up loop counter for 10 digits max
-    
+    mov ecx, 4                 ; Set up loop counter for 10 digits max
+
 convert_loop:
     mov edx, 0                 ; Clear EDX for division
     mov ebx, 10                ; Divisor (base 10)
@@ -68,29 +75,29 @@ convert_loop:
     mov [esi], dl              ; Store ASCII character in the buffer
     test eax, eax              ; Check if quotient is zero
     jnz convert_loop           ; If not, continue the loop
-    
-    ; Print the output message
-    mov eax, 4                 ; Syscall number for sys_write
-    mov ebx, 1                 ; File descriptor (stdout)
-    mov ecx, msg               ; Message to print
-    mov edx, msg_len           ; Message length
+
+    ; Print the result message
+    mov eax, SYS_WRITE         ; System call for writing
+    mov ebx, SYS_OUTPUT        ; File descriptor (stdout)
+    mov ecx, msg               ; Address of the result message
+    mov edx, msg_len           ; Length of the result message
     int 0x80                   ; Call kernel
-    
-    ; Print the ASCII representation
-    mov eax, 4                 ; Syscall number for sys_write
-    mov ebx, 1                 ; File descriptor (stdout)
-    mov ecx, esi              ; Address of ASCII representation
-    mov edx, 4                ; Message length
+
+    ; Print the ASCII representation of the result
+    mov eax, SYS_WRITE         ; System call for writing
+    mov ebx, SYS_OUTPUT        ; File descriptor (stdout)
+    mov ecx, esi               ; Address of the ASCII representation
+    mov edx, 4                 ; Message length
     int 0x80                   ; Call kernel
-    
+
     ; Print newline after the result
-    mov eax, 4                 ; Syscall number for sys_write
-    mov ebx, 1                 ; File descriptor (stdout)
+    mov eax, SYS_WRITE         ; System call for writing
+    mov ebx, SYS_OUTPUT        ; File descriptor (stdout)
     mov ecx, newline           ; Address of newline character
     mov edx, 1                 ; Message length (1 character)
     int 0x80                   ; Call kernel
 
     ; Exit the program
-    mov eax, 1                 ; Syscall number for sys_exit
+    mov eax, 1                 ; System call for exit
     xor ebx, ebx               ; Return 0 status
     int 0x80                   ; Call kernel
