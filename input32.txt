@@ -44,12 +44,12 @@ _start:
     mov ebx, 0
     int 0x80
     
-    ; (It only allow enter single Number, transfer to num first)
-    mov eax, dword [num1]    ; Move the value of num1 into register EAX
-    sub eax, '0'        ; convert char to num
-    mov ebx, dword [num2]    ; Move the value of num1 into register EAX
-    sub ebx, '0'        ; convert char to num
-    
+    ; It only allow enter single Number, transfer to num first
+    movzx eax, byte [num1]    ; Move the value of num1 into register EAX, zero-extend to dword
+    sub eax, '0'              ; convert char to num
+    movzx ebx, byte [num2]    ; Move the value of num1 into register EAX, zero-extend to dword
+    sub ebx, '0'              ; convert char to num
+
     ; Addition
     add eax, ebx    ; Add the value of num2 to register EAX
     
