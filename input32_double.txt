@@ -8,9 +8,9 @@ section .data
     newline db 10, 0           ; Define newline character (10 is ASCII code for newline)
 
 section .bss
-    num1    resb 1
-    num2    resb 1
-    ascii_buff resb 3            ; Reserve space for ASCII representation (up to 10 characters)
+    num1    resb 4
+    num2    resb 4
+    ascii_buff resb 10            ; Reserve space for ASCII representation (up to 10 characters)
 
 section .text
     global _start
@@ -25,13 +25,10 @@ _start:
     
     ; Read variables
     mov eax, 3
-    mov edx, 1
+    mov edx, 4
     mov ecx, num1
     mov ebx, 0
     int 0x80
-    
-    ; Set null terminator for num1
-    mov byte [num1 + 1], 0    ; Set null terminator after the input
     
     ; Input variables
     mov eax, 4
@@ -42,18 +39,15 @@ _start:
     
     ; Read variables
     mov eax, 3
-    mov edx, 1
+    mov edx, 4
     mov ecx, num2
     mov ebx, 0
     int 0x80
     
-     ; Set null terminator for num2
-    mov byte [num2 + 1], 0    ; Set null terminator after the input
-    
-    ; Transfer Char to Num
-    movzx eax, byte [num1]    ; Move the value of num1 into register EAX (zero-extended to 32 bits)
+    ; (It only allow enter single Number, transfer to num first)
+    mov eax, [num1]    ; Move the value of num1 into register EAX
     sub eax, '0'        ; convert char to num
-    movzx ebx, byte [num2]    ; Move the value of num2 into register EBX (zero-extended to 32 bits)
+    mov ebx, [num2]    ; Move the value of num1 into register EAX
     sub ebx, '0'        ; convert char to num
     
     ; Addition
@@ -61,7 +55,7 @@ _start:
     
     ; Convert the number to ASCII
     mov esi, ascii_buff        ; Point ESI to the buffer for ASCII representation
-    mov ecx, 3                ; Set up loop counter for 10 digits max
+    mov ecx, 10                ; Set up loop counter for 10 digits max
     
 convert_loop:
     mov edx, 0                 ; Clear EDX for division
@@ -84,7 +78,7 @@ convert_loop:
     mov eax, 4                 ; Syscall number for sys_write
     mov ebx, 1                 ; File descriptor (stdout)
     mov ecx, esi              ; Address of ASCII representation
-    mov edx, 3                ; Message length
+    mov edx, 10                ; Message length
     int 0x80                   ; Call kernel
     
     ; Print newline after the result
