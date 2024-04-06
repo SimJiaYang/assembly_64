@@ -4,7 +4,7 @@ section .data
     inLen_1 equ $-inMsg_1-1    ; Length of the first input message
     inMsg_2 db "Please input second number: ", 10, 0   ; Message prompting for the second number
     inLen_2 equ $-inMsg_2-1    ; Length of the second input message
-    msg db 'Result', 10, 0     ; Message indicating the start of the result, with newline character
+    msg db 'Result of Sum', 10, 0     ; Message indicating the start of the result, with newline character
     msg_len equ $-msg-1        ; Length of the result message
 
     ; New Line
@@ -19,7 +19,7 @@ section .data
 section .bss
     num1    resb 4             ; Reserve space for the first number
     num2    resb 4             ; Reserve space for the second number
-    ascii_buff resb 4          ; Reserve space for ASCII representation (up to 10 characters)
+    ascii_buff resb 4          ; Reserve space for ASCII representation (up to 4 characters)
 
 section .text
     global _start
